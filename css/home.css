@@ -1,0 +1,35 @@
+:root{
+    --bggradient:linear-gradient(
+        to bottom,
+        #00BFA6, #f8f8f8);
+}
+
+.background{
+    height: 100%;
+    width: 100%;
+    background: #00BFA6;
+    background: var(--bggradient);
+	position: absolute;
+}
+
+.card {
+    position: relative;
+    z-index: 1;
+    background: white;
+    width: 19rem;
+    height: 12rem;
+    padding-top: 3.5vmin;
+    margin: 1rem;
+    border-radius: .5em;
+}
+
+.card-body .btn {
+    width: 14rem;
+}
+
+
+main{
+    font-family: var(--Rubik);
+    padding-top: 20vmin;
+    margin-top: 70px;
+}

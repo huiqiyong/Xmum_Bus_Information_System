@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMUM Shuttle Bus Information System</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div class="full-page">
+        <div>
+            <h1 style="padding-top: 50px; text-align: center; color: #00BFA6;">XMUM Shuttle Bus Information System</h1>
+        </div>
+
+        <div id='login-form'class='login-page'>
+            <!----creating form-box---->
+            <div class="form-box">
+                <div class='button-box'>
+                    <div id='btn'></div>
+                    <button type='button'onclick='login()'class='toggle-btn'>Sign In</button>
+                    <button type='button'onclick='register()'class='toggle-btn'>Register</button>
+                </div>
+                <!----creating login form---->
+                <form id='login' class='input-group-login'>
+                    <input type='text'class='input-field'placeholder='Username'id='userInp1'>
+                    <input type='password'class='input-field'placeholder='Password'id='passInp1'>
+                    <button type='button'class='sub-btn' style='margin-top: 20px;'id='sub-btn1'>Sign In</button>
+                </form>
+                <!----creating register form---->
+                <form id='register' class='input-group-register'>
+                    <input type='text'class='input-field'placeholder='Full Name'id='nameInp' >
+                    <input type='email'class='input-field'placeholder='Email'id='emailInp' >
+                    <input type='text'class='input-field'placeholder='Username'id='userInp2' >
+                    <input type='password'class='input-field'placeholder='Password'id='passInp2'  >
+                    <button type='button'class='sub-btn'style='margin-top: 20px;'id='sub-btn2'>Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!----for login form and registration form to move correctly---->
+    <script>
+        var x=document.getElementById('login');
+		var y=document.getElementById('register');
+		var z=document.getElementById('btn');
+		function register()
+		{
+			x.style.left='-400px';
+			y.style.left='50px';
+			z.style.left='110px';
+		}
+		function login()
+		{
+			x.style.left='50px';
+			y.style.left='450px';
+			z.style.left='0px';
+		}
+	</script>
+
+    <script type="module">
+        //---------------------------------------------------------FIREBASE CONFIGURATION--------------------------------------------------------//
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkNRzXmWEQ5Ik3GfQRE59eFCBfkoBfb60",
+            authDomain: "xmumbus-e6e01.firebaseapp.com",
+            databaseURL: "https://xmumbus-e6e01-default-rtdb.firebaseio.com",
+            projectId: "xmumbus-e6e01",
+            storageBucket: "xmumbus-e6e01.appspot.com",
+            messagingSenderId: "802211169273",
+            appId: "1:802211169273:web:8d5421c3a5f64e57083328",
+            measurementId: "G-026YN6M9WN"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        import { getDatabase, ref, set, child, get } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+        const db = getDatabase();
+
+        //--------------------------------------------------------REFERENCES--------------------------------------------------------//
+        //Register
+        const name = document.getElementById('nameInp');
+        const email = document.getElementById('emailInp');
+        const username = document.getElementById('userInp2');
+        const pass = document.getElementById('passInp2');
+        const submit = document.getElementById('sub-btn2');
+        //Login
+        const username1 = document.getElementById('userInp1');
+        const pass1 = document.getElementById('passInp1');
+        const submit1 = document.getElementById('sub-btn1');
+
+        //--------------------------------------------------------AUTHENTICATION--------------------------------------------------------//
+        function Authenticate(){
+            const dbref = ref(db);
+
+            if(username1.value != "" && pass1.value != ""){
+                get(child(dbref, "Admin/"+username1.value)).then((snapshot)=>{
+                    if(snapshot.exists()){
+                        let dbpass = snapshot.val().password;
+                        var hpass = hashPass(pass1.value, username1.value);
+                        if(dbpass == hpass){
+                            sessionStorage.setItem("username", username1.value);
+                            window.location.href="home.html";
+                        }
+                        else{
+                            alert("Wrong Password. Please try again.");
+                        }
+                    }
+                    else{
+                        alert("Invalid Username and Password")
+                    }
+                });
+            }
+            else{
+                alert("All fields are required");
+            }
+        }
+
+        //---------------------------------------------------------VALIDATION--------------------------------------------------------//
+        function isEmptyOrSpaces(str){
+            return str === null || str.match(/^ *$/) !== null;
+        }
+        
+        function ValidationRegister(){
+            let nameregex = /^[a-zA-Z\s]+$/;
+            let emailregex = /^[a-zA-Z0-9]+@(gmail|yahoo|outlook)\.com$/;
+            let userregex = /^[a-zA-Z0-9]{10}$/;
+
+            if(isEmptyOrSpaces(name.value) || isEmptyOrSpaces(email.value) || isEmptyOrSpaces(username.value) || isEmptyOrSpaces(pass.value)){
+                alert("All fields are required");
+                return false;
+            }
+
+            if(!nameregex.test(name.value)){
+                alert("The name should only contain alphabets!");
+                return false;
+            }
+
+            if(!emailregex.test(email.value)){
+                alert("Please enter a valid email!");
+                return false;
+            }
+
+            if(!userregex.test(username.value)){
+                alert("-Username can only be alphanumeric\n-Username must be 10 characters\n-Username cannot contain spaces");
+                return false;
+            }
+            
+            return true;
+        }
+
+        //---------------------------------------------------------REGISTER USER TO FIREBASE--------------------------------------------------------//
+        function RegisterAdmin(){
+            if(!ValidationRegister()){
+                return;
+            }
+            const dbRef = ref(db);
+            get(child(dbRef, `Admin/${username.value}`)).then((snapshot) => {
+                if(snapshot.exists()){
+                    alert("Account Already Exist!");
+                }
+                else{
+                    set(ref(db, 'Admin/' + username.value), {
+                        fullname: name.value,
+                        email: email.value,
+                        username: username.value,
+                        password: hashPass(pass.value,username.value)
+                    })
+                    .then(()=>{
+                        alert("User added successfully");
+                    })
+                    .catch((error)=>{
+                        alert("error"+error);
+                    })
+                }
+            });
+        }
+
+        //---------------------------------------------------------HASH PASSWORD--------------------------------------------------------//
+        function hashPass(userpass, salt){
+            var iterations = 1000;
+            var passHash = CryptoJS.PBKDF2(userpass, salt, { keySize: 512/32, iterations: iterations });
+            return passHash.toString();
+        }
+
+        //---------------------------------------------------------ASSIGN EVENTS--------------------------------------------------------//
+        submit.addEventListener("click", RegisterAdmin);
+        submit1.addEventListener("click", Authenticate);
+    </script>
+</body>
+</html>

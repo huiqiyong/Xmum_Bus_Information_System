@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routes</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/routeSchedule.css"/>
+    <script>  
+      $(function(){ 
+        $("#header").load("header.html");
+      }); 
+
+      function passValue(){
+        var route = document.getElementById("title").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue2(){
+        var route = document.getElementById("title2").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue3(){
+        var route = document.getElementById("title3").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue4(){
+        var route = document.getElementById("title4").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue5(){
+        var route = document.getElementById("title5").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue6(){
+        var route = document.getElementById("title6").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue7(){
+        var route = document.getElementById("title7").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue8(){
+        var route = document.getElementById("title8").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+
+      function passValue9(){
+        var route = document.getElementById("title9").innerText;
+        localStorage.setItem("routename", route);
+        return false;
+      }
+    </script>
+</head>
+<body>
+    <div id="header"></div>
+
+  <div class="background">
+    <main>
+      <div class="container mt-3 text-center">
+        <h4 style="margin-bottom: 30px;"><b>Routes</b></h4>
+
+        <div class="row">
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title">Monday-Thursday Daily Route 1</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue2();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title2">Monday-Thursday Daily Route 2</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue3();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title3">Friday Morning Daily Route</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue4();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title4">Friday-Sunday Daily Route 1</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue5();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title5">Friday-Sunday Daily Route 2</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue6();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title6">Saturday Special Route 1</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue9();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title9">Saturday Special Route 2</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue7();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title7">Friday & Sunday Special Route 1</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card mb-3" style="max-width: 100%; max-height: 70px; cursor: pointer;">
+            <a class="link" href="schedules.html" onclick="passValue8();"></a>
+            <div class="row no-gutters">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title" id="title8">Friday & Sunday Special Route 2</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+      </div>
+    </main>
+    
+  </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

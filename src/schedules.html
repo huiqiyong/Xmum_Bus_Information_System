@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/schedule.css"/>
+    <script>  
+        $(function(){ 
+            $("#header").load("header.html");
+        }); 
+    </script>
+</head>
+<body>
+    <div class="background">
+        <div id="header"></div>
+    
+        <main>
+            <div class="container mt-2">
+                <h4 style="margin-bottom: 20px;" id="result"></h4>
+
+                <div class="card">
+                    <div class="card-header" style="color: rgb(0, 140, 255);"><b>Route information</b></div>
+                    <div class="card-body">
+                        <table>
+                            <tbody id="table_body1" style="font-size: 0.85rem;"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-5"></div>
+
+                <div class="card">
+                    <div class="card-header" style="color: rgb(0, 140, 255);">
+                        <b>Schedule information</b>
+                    </div>
+                    <div class="card-body">
+                        <table class="table text-center">
+                            <thead>
+                                <th>No.</th>
+                                <th>Day</th>
+                                <th>Route</th>
+                                <th>Driver ID</th>
+                                <th>Bus No</th>
+                              </thead>
+                            <tbody id="table_body2"></tbody>
+                        </table>
+                        
+                        <button type='button'class='view-btn' id="btn_view">View Timetable</button>
+                    </div>
+                </div>
+
+                <div class="mt-5"></div>
+
+            <hidden><div class="card">
+                    <div class="card-header" style="color: rgb(0, 140, 255);"><b>Shuttle Bus Timetable</b></div>
+                    <div class="card-body">
+                        <table class="center" width="100%">
+                            <thead class="text-center" style="background-color: #ECECEC;" id="table_head1"></thead>
+                            <tbody class="text-center" id="table_body3"></tbody>
+                        </table>
+                        <button type='button'class='edt-btn' style="margin-top: 20px;" data-toggle="modal" data-target="#exampleModalCenter">Edit Timetable</button>
+                    </div>
+                </div></hidden>
+
+                <div class="pt-5"></div>
+            </div>
+
+            <script>
+                //---Get route name from previous page---//
+                document.getElementById("result").innerHTML=localStorage.getItem("routename");
+                var routeValue =localStorage.getItem("routename");
+            </script>
+
+            <!-- Modal starts-->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Shuttle Bus Timetable</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table>
+                                <tbody id="table_body4"></tbody>
+                            </table>
+                            <br>
+                            <table>
+                                <tbody id="table_body5"></tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="UpdModBtn" type="button" class="btn btn-success">Update Schedule</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal ends-->
+
+            <script type="module">
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCkNRzXmWEQ5Ik3GfQRE59eFCBfkoBfb60",
+                    authDomain: "xmumbus-e6e01.firebaseapp.com",
+                    databaseURL: "https://xmumbus-e6e01-default-rtdb.firebaseio.com",
+                    projectId: "xmumbus-e6e01",
+                    storageBucket: "xmumbus-e6e01.appspot.com",
+                    messagingSenderId: "802211169273",
+                    appId: "1:802211169273:web:8d5421c3a5f64e57083328",
+                    measurementId: "G-026YN6M9WN"
+                };
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+
+                import { getDatabase, ref, child, update, get, set, remove, onValue, query, orderByChild, equalTo
+                        } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
+                const db = getDatabase();
+
+                // Hide timetable
+                let card3 = document.querySelector("hidden");
+                card3.style.display = 'none';
+
+//--------------------------------------SHOW TIMETABLE---------------------------------------------//
+                const viewButton = document.getElementById('btn_view');
+                function ShowTimetable(){
+                    card3.style.display = 'block';
+                }
+
+//--------------------------------------GET ROUTE INFO & SET UP TABLE HEAD FOR TIMETABLE---------------------------------------------//
+                function GetRouteDataRealtime(){
+                    var count = 0;
+                    const dbRef = ref(db,"BusStop/"+routeValue);
+                    
+                    onValue(dbRef, (snapshot)=>{
+                        $("#table_head1").append('<th style="padding:10px">' + "Day" + '</th>');
+                        $("#table_head1").append('<th style="padding:10px">' + "Route" + '</th>');
+                        $("#table_body4").append('<tr><td>' + "Day" + '</td><td>' + '<input type="text" id="dayId" style="width:150px; margin-left:20px">' + '</td><td style="padding-left:20px">' + "Route" + '</td><td>' + '<input type="text" id="routeId" style="width:150px; margin-left:20px">' + '</td></tr>');
+
+                        snapshot.forEach(childSnapshot => {
+                            $("#table_body5").append('<tr><td>' + childSnapshot.val().Title + '</td><td>' + '<input type="text" style="width:150px; margin-left:40px" id="TimeID' + count + '"</td></tr>');
+                            if(count > 0){
+                                $("#table_head1").append('<th style="padding:10px">' + childSnapshot.val().Title + '</th>');
+                                $("#table_body1").append('<td>' + '&nbsp;->&nbsp;' + childSnapshot.val().Title + '</td>');
+                                count++;
+                            }else if(count == 0){
+                                $("#table_head1").append('<th style="padding:10px">' + childSnapshot.val().Title + '</th>');
+                                $("#table_body1").append('<td>' + childSnapshot.val().Title + '</td>');
+                                count++;
+                            }
+                        });
+                    });
+                }
+
+//----------------------------------GET SCHEDULE INFO----------------------------------------//
+                function GetScheduleData(){
+                    const dbref = query(ref(db, "Routes"));
+                    
+                    onValue(dbref, (snapshot)=>{
+                        snapshot.forEach(childSnapshot => {
+                            childSnapshot.forEach(snap => {
+                                if(snap.child("RouteType").val()==routeValue){
+                                    AddItemToTable(snap.ref.parent.key, snap.key, snap.child("Driver").val(), snap.child("BusNo").val());
+                                    if(snap.ref.parent.key == "Saturday" || snap.ref.parent.key == "Sunday"){
+                                        GetTimeSlot("Saturday-Sunday", snap.key, snap.ref.parent.key);
+                                    }else{
+                                        GetTimeSlot(snap.ref.parent.key, snap.key, snap.ref.parent.key);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                }
+
+//----------------------------------GET TIME INFO----------------------------------------//
+                function GetTimeSlot(days, routeName, dayName){
+                    const DBref = ref(db, "Schedule/" + days);
+
+                    onValue(DBref, (snapshot)=>{
+                        snapshot.forEach(childSnapshot => {
+                            if(childSnapshot.child("RouteType").val()==routeValue && childSnapshot.child("Route").val()==routeName){
+                                if(childSnapshot.val().DepartTime9 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black; padding:10px;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td><td>' + childSnapshot.val().DepartTime5 + '</td><td>' + childSnapshot.val().DepartTime6 + '</td><td>' + childSnapshot.val().DepartTime7 + '</td><td>' + childSnapshot.val().DepartTime8 + '</td><td>' + childSnapshot.val().DepartTime9 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime8 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td><td>' + childSnapshot.val().DepartTime5 + '</td><td>' + childSnapshot.val().DepartTime6 + '</td><td>' + childSnapshot.val().DepartTime7 + '</td><td>' + childSnapshot.val().DepartTime8 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime7 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td><td>' + childSnapshot.val().DepartTime5 + '</td><td>' + childSnapshot.val().DepartTime6 + '</td><td>' + childSnapshot.val().DepartTime7 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime6 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td><td>' + childSnapshot.val().DepartTime5 + '</td><td>' + childSnapshot.val().DepartTime6 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime5 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td><td>' + childSnapshot.val().DepartTime5 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime4 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td><td>' + childSnapshot.val().DepartTime4 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime3 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td><td>' + childSnapshot.val().DepartTime3 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime2 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' +
+                                        childSnapshot.val().DepartTime1 + '</td><td>' + childSnapshot.val().DepartTime2 + '</td></tr>');
+                                }else if(childSnapshot.val().DepartTime1 != "null"){
+                                    $("#table_body3").append('<tr style="border-bottom: 1px solid black;"><td>' + dayName + '</td><td>' + routeName + '</td><td>' + 
+                                        childSnapshot.val().DepartTime1 + '</td></tr>');
+                                }
+                            }
+                        });
+                    });
+                }
+
+//--------------------------------------UPDATE TIMETABLE---------------------------------------------//               
+                var BTNmodUpd = document.getElementById('UpdModBtn');
+                function UpdateButtonClick(){
+                    var dayID = document.getElementById('dayId');
+                    
+                    if(dayID.value == "Saturday" || dayID.value == "Sunday"){
+                        const refDb = ref(db, "Schedule/" + "Saturday-Sunday");
+                        UpdSchedule(refDb, "Saturday-Sunday");
+                    }else{
+                        const refDb = ref(db, "Schedule/" + dayID.value);
+                        UpdSchedule(refDb, dayID.value);
+                    }
+                }
+
+                function UpdSchedule(reference, dayname){
+                    var routeID = document.getElementById('routeId');
+                    var t1 = document.getElementById('TimeID0');
+                    var t2 = document.getElementById('TimeID1');
+                    var t3 = document.getElementById('TimeID2');
+                    var t4 = document.getElementById('TimeID3');
+                    var t5 = document.getElementById('TimeID4');
+                    var t6 = document.getElementById('TimeID5');
+                    var t7 = document.getElementById('TimeID6');
+                    var t8 = document.getElementById('TimeID7');
+                    var t9 = document.getElementById('TimeID8');
+
+                    onValue(reference, (snapshot)=>{
+                        snapshot.forEach(snapshotChild=>{
+                            if(snapshotChild.child("RouteType").val()==routeValue && snapshotChild.child("Route").val()==routeID.value){
+                                if(t1 != null){
+                                    if(t1.value != ""){
+                                        // update departure time1
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime1: t1.value
+                                        })
+                                    }
+                                }
+                                if(t2 != null){
+                                    if(t2.value != ""){
+                                        // update departure time2
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime2: t2.value
+                                        })
+                                    }
+                                }
+                                if(t3 != null){
+                                    if(t3.value != ""){
+                                        // update departure time3
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime3: t3.value
+                                        })
+                                    }
+                                }
+                                if(t4 != null){
+                                    if(t4.value != ""){
+                                        // update departure time4
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime4: t4.value
+                                        })
+                                    }
+                                }
+                                if(t5 != null){
+                                    if(t5.value != ""){
+                                        // update departure time5
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime5: t5.value
+                                        })
+                                    }
+                                }
+                                if(t6 != null){
+                                    if(t6.value != "" && t6.value != null){
+                                        // update departure time6
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime6: t6.value
+                                        })
+                                    }
+                                }
+                                if(t7 != null){
+                                    if(t7.value != "" && t7.value != null){
+                                        // update departure time7
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime7: t7.value
+                                        })
+                                    }
+                                }
+                                if(t8 != null){
+                                    if(t8.value != "" && t8.value != null){
+                                        // update departure time8
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime8: t8.value
+                                        })
+                                    }
+                                }
+                                if(t9 != null){
+                                    if(t9.value != "" && t9.value != null){
+                                        // update departure time9
+                                        update(ref(db, 'Schedule/' + dayname + '/' + snapshotChild.key), {
+                                            DepartTime9: t9.value
+                                        })
+                                    }
+                                }
+                                
+                                window.location.reload();   // Refresh page
+                            }
+                        })
+                    })
+                }
+
+//----------------------------------FILL TABLE----------------------------------------//
+                var recordNo = 0;
+                var tbody = document.getElementById('table_body2');
+
+                function AddItemToTable(day,route,dId,busNo){
+                    let trow = document.createElement("tr");
+                    let td1 = document.createElement('td');
+                    let td2 = document.createElement('td');
+                    let td3 = document.createElement('td');
+                    let td4 = document.createElement('td');
+                    let td5 = document.createElement('td');
+
+                    td1.innerHTML= ++recordNo;
+                    td2.innerHTML= day;
+                    td3.innerHTML= route;
+                    td4.innerHTML= dId;
+                    td5.innerHTML= busNo;
+
+                    trow.appendChild(td1);
+                    trow.appendChild(td2);
+                    trow.appendChild(td3);
+                    trow.appendChild(td4);
+                    trow.appendChild(td5);
+
+                    tbody.appendChild(trow);
+                }
+
+                window.addEventListener("load", GetRouteDataRealtime, true);
+                window.addEventListener("load", GetScheduleData, true);
+                viewButton.addEventListener("click", ShowTimetable);
+                BTNmodUpd.addEventListener("click", UpdateButtonClick);
+
+            </script>
+
+        </main>
+        
+      </div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+</body>
+</html>

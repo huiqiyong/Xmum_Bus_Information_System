@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/home.css"/>
+    <script>  
+      $(function(){ 
+        $("#header").load("header.html");
+      }); 
+
+      //---Get username from login page---//
+      var value = sessionStorage.getItem("username");
+      console.log(value);
+      
+    </script>
+</head>
+
+<body>
+
+<div class="background">
+
+  <div id="header"></div>
+  
+  <main>
+        <div class="menu text-center">
+            <div class="cards">
+                <div class="d-flex flex-row justify-content-center flex-wrap">
+                    <!--First card-->
+                    <div class="card mr-2 d-inline-block shadow-lg">
+                        <div class="card-img-top">
+                            <img src="../images/record-icon.png" alt="Travel Record icon" width="70" height="70"/>
+                        </div>
+                        <div class="card-body">
+                            <a href="travelRecord.html" class="btn btn-dark px-5 py-2 mb-5">Travel Record</a>
+                        </div>
+                    </div>
+                    <!--Second card-->
+                    <div class="card mr-2 d-inline-block shadow-lg">
+                        <div class="card-img-top">
+                            <img src="../images/schedule-icon.png" alt="Route Schedule icon" width="70" height="70"/>
+                        </div>
+                        <div class="card-body">
+                            <a href="routeSchedule.html" class="btn btn-dark px-5 py-2 mb-5">Route Schedule</a>
+                        </div>
+                    </div>
+                    <!--Third card-->
+                    <div class="card mr-2 d-inline-block shadow-lg">
+                        <div class="card-img-top">
+                            <img src="../images/record-icon.png" alt="Booking icon" width="70" height="70"/>
+                        </div>
+                        <div class="card-body">
+                            <a href="bookingRecord.html" class="btn btn-dark px-5 py-2 mb-5">Booking Record</a>
+                        </div>
+                    </div><br>
+                    <!--Fourth card-->
+                    <div class="card mr-2 d-inline-block shadow-lg">
+                        <div class="card-img-top">
+                            <img src="../images/driver-icon.png" alt="Drivers icon" width="70" height="70"/>
+                        </div>
+                        <div class="card-body">
+                            <a href="drivers.html" class="btn btn-dark px-5 py-2 mb-5">Drivers</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </main>
+</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

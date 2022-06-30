@@ -1,0 +1,40 @@
+/*Google Font*/
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Lobster&family=Patua+One&family=Rubik&family=Sniglet&display=swap');
+
+:root{
+    --bggradient:linear-gradient(
+        to bottom,
+        #00BFA6, #f8f8f8);
+}
+
+.background{
+    width: 100%;
+    background: #00BFA6;
+    background: var(--bggradient);
+	position: absolute;
+}
+
+main{
+    font-family: var(--Rubik);
+    padding-top: 5vmin;
+    margin-top: 70px;
+}
+
+.download-btn
+{
+	padding: 5px 15px;
+	cursor: pointer;
+	display: inline;
+	margin: auto;
+	float: right;
+	background: #00BFA6;
+	border: 0;
+	outline: none;
+	border-radius: 10px;
+	color: white;
+}
+
+.download-btn:hover
+{
+	background: #009e89;
+}
